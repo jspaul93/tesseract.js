@@ -9,6 +9,13 @@ exports.defaultOptions = {
 }
 
 exports.spawnWorker = function spawnWorker(instance, workerOptions){
+    const debugPort = process.debugPort,
+        options = {};
+
+    if (debugPort) {
+        options.execArgv = ["--inspect-brk=" + (process.debugPort + 1)];
+    }
+
     var cp = fork(workerOptions.workerPath);
     cp.on('message', packet => {
         instance._recv(packet);
