@@ -13,10 +13,10 @@ exports.spawnWorker = function spawnWorker(instance, workerOptions){
         options = {};
 
     if (debugPort) {
-        options.execArgv = ["--inspect-brk=" + (process.debugPort + 1)];
+        options.execArgv = ["--inspect-brk=" + (debugPort)];
     }
 
-    var cp = fork(workerOptions.workerPath);
+    var cp = fork(workerOptions.workerPath, [], options);
     cp.on('message', packet => {
         instance._recv(packet);
     });
