@@ -13,7 +13,7 @@ exports.spawnWorker = function spawnWorker(instance, workerOptions){
         options = {};
 
     if (debugPort) {
-        options.execArgv = ["--inspect-brk=" + (debugPort)];
+        options.execArgv = ["--inspect-brk=" + (debugPort + 1)];
     }
 
     var cp = fork(workerOptions.workerPath, [], options);
