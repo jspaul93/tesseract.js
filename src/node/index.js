@@ -9,14 +9,17 @@ exports.defaultOptions = {
 }
 
 exports.spawnWorker = function spawnWorker(instance, workerOptions){
-    const debugPort = process.debugPort,
-        options = {};
+    const debug = typeof v8debug === 'object'
+      || /--debug|--inspect/.test(process.execArgv.join(' '));
 
-    if (debugPort) {
-        options.execArgv = [`--inspect-brk=${debugPort + 1}`];
+    let cp;
+
+    if (debug) {
+        cp = fork(workerOptions.workerPath, [], {execArgv: [`--inspect-brk=${process.debugPort + 1}`]});
+    } else {
+        cp = fork(workerOptions.workerPath);
     }
 
-    var cp = fork(workerOptions.workerPath, [], options);
     cp.on('message', packet => {
         instance._recv(packet);
     });
@@ -36,7 +39,7 @@ exports.sendPacket = function sendPacket(instance, packet){
 
 
 function loadImage(image, cb){
-    
+
     if(isURL(image)) {
         fetch(image)
             .then(resp => resp.buffer())
