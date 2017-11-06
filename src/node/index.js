@@ -9,16 +9,7 @@ exports.defaultOptions = {
 }
 
 exports.spawnWorker = function spawnWorker(instance, workerOptions){
-    const debug = typeof v8debug === 'object'
-      || /--debug|--inspect/.test(process.execArgv.join(' '));
-
-    let cp;
-
-    if (debug) {
-        cp = fork(workerOptions.workerPath, [], {execArgv: [`--inspect-brk=${process.debugPort + 1}`]});
-    } else {
-        cp = fork(workerOptions.workerPath);
-    }
+    const cp = fork(workerOptions.workerPath, [], {execArgv: []});
 
     cp.on('message', packet => {
         instance._recv(packet);
